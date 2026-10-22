@@ -16,7 +16,9 @@ jobs:
   submit:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Controlla la versione
         shell: pwsh
@@ -30,7 +32,11 @@ jobs:
 
       - name: Scarica wingetcreate
         shell: pwsh
-        run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+        # versione fissa e hash verificato: questo job riceve il PAT
+        run: |
+          Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.12.13.0/wingetcreate.exe -OutFile wingetcreate.exe
+          $hash = (Get-FileHash wingetcreate.exe -Algorithm SHA256).Hash
+          if ($hash -ne '24042BD37915805615E6CF969AC57C6439124C3FE85823327F5F3FB24BD9FFEA') { throw "Hash di wingetcreate inatteso: $hash" }
 
       - name: Apri la PR
         shell: pwsh
