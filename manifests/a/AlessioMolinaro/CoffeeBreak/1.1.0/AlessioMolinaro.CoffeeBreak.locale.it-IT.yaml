@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json
+
+PackageIdentifier: AlessioMolinaro.CoffeeBreak
+PackageVersion: 1.1.0
+PackageLocale: it-IT
+Publisher: Alessio Molinaro
+PublisherUrl: https://github.com/alexmoli97
+PublisherSupportUrl: https://github.com/alexmoli97/coffeebreak/issues
+Author: Alessio Molinaro
+PackageName: CoffeeBreak
+PackageUrl: https://github.com/alexmoli97/coffeebreak
+License: MIT
+LicenseUrl: https://github.com/alexmoli97/coffeebreak/blob/HEAD/LICENSE
+Copyright: Copyright (c) 2026 Alessio Molinaro
+ShortDescription: L'agenda di ITDevCon 2026, con il conto alla rovescia per il coffee break.
+Description: App demo del talk "Basta con AggiornamentiU.pas! Usa WinGet e UniGetUI per distribuire le tue applicazioni Delphi" (ITDevCon 2026, Roma). App VCL senza codice di aggiornamento, distribuita con WinGet.
+Moniker: coffeebreak
+Tags:
+- delphi
+- itdevcon
+- vcl
+ReleaseNotesUrl: https://github.com/alexmoli97/coffeebreak/releases/tag/v1.1.0
+ManifestType: defaultLocale
+ManifestVersion: 1.12.0
