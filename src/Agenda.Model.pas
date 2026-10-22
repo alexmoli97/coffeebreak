@@ -21,6 +21,7 @@ function CurrentSessionIndex(const AAgenda: TArray<TSession>; const ARoom: strin
 function NextBreak(const AAgenda: TArray<TSession>; const ANow: TDateTime; out AMinutes: Integer): TBreakState;
 function DefaultDay(const AAgenda: TArray<TSession>; const ANow: TDateTime): TDate;
 function BreakBannerText(const AState: TBreakState; const AMinutes: Integer): string;
+function IsLastTalk(const AAgenda: TArray<TSession>; const ANow: TDateTime): Boolean;
 
 implementation
 
@@ -175,6 +176,21 @@ begin
   else
     Result := 'Mancano ' + Quantity(Hours, 'ora', 'ore') + ' e ' + Quantity(Minutes, 'minuto', 'minuti');
   Result := Result + ' al coffee break';
+end;
+
+// vero mentre è in corso un talk dell'ultimo slot della conferenza
+function IsLastTalk(const AAgenda: TArray<TSession>; const ANow: TDateTime): Boolean;
+var
+  LastStart: TDateTime;
+begin
+  LastStart := 0;
+  for var S in AAgenda do
+    if (S.Kind = skTalk) and (S.StartAt > LastStart) then
+      LastStart := S.StartAt;
+  for var S in AAgenda do
+    if (S.Kind = skTalk) and (S.StartAt = LastStart) and (S.StartAt <= ANow) and (ANow < S.EndAt) then
+      Exit(True);
+  Result := False;
 end;
 
 end.

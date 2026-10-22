@@ -29,6 +29,9 @@ type
     [Test] procedure NextBreak_PrimaDellaConferenza;
     [Test] procedure DefaultDay_GiornoDellaConferenza;
     [Test] procedure DefaultDay_FuoriDallaConferenza;
+    [Test] procedure IsLastTalk_DuranteLUltimoTalk;
+    [Test] procedure IsLastTalk_PrimaDellUltimoTalk;
+    [Test] procedure IsLastTalk_FineEsclusa;
     [Test]
     [TestCase('20 minuti', '0,20,Mancano 20 minuti al coffee break')]
     [TestCase('1 minuto', '0,1,Manca 1 minuto al coffee break')]
@@ -199,6 +202,21 @@ end;
 procedure TAgendaModelTests.DefaultDay_FuoriDallaConferenza;
 begin
   Assert.AreEqual(EncodeDate(2026, 11, 19), DefaultDay(FAgenda, DT(2026, 10, 22, 10, 0)));
+end;
+
+procedure TAgendaModelTests.IsLastTalk_DuranteLUltimoTalk;
+begin
+  Assert.IsTrue(IsLastTalk(FAgenda, DT(2026, 11, 20, 16, 50)));
+end;
+
+procedure TAgendaModelTests.IsLastTalk_PrimaDellUltimoTalk;
+begin
+  Assert.IsFalse(IsLastTalk(FAgenda, DT(2026, 11, 20, 15, 30)));
+end;
+
+procedure TAgendaModelTests.IsLastTalk_FineEsclusa;
+begin
+  Assert.IsFalse(IsLastTalk(FAgenda, DT(2026, 11, 20, 17, 40)));
 end;
 
 procedure TAgendaModelTests.BreakBannerText_Testo(const AState, AMinutes: Integer; const AExpected: string);

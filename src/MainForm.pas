@@ -113,7 +113,6 @@ begin
 
   Caption := 'CoffeeBreak ' + FVersion;
   LabelTitle.Caption := 'ITDevCon 2026 · Roma';
-  LabelSubtitle.Caption := 'L''agenda della conferenza, sala per sala';
   ButtonDay19.Caption := DayCaption(FDays[0]);
   ButtonDay20.Caption := DayCaption(FDays[1]);
   StatusBar.Panels[0].Text := 'CoffeeBreak ' + FVersion;
@@ -179,6 +178,19 @@ var
 begin
   T := CurrentNow;
   LabelBreak.Caption := BreakBannerText(NextBreak(FAgenda, T, Minutes), Minutes);
+  if IsLastTalk(FAgenda, T) then
+  begin
+    LabelSubtitle.Caption := 'Grazie per essere rimasti fino all''ultimo talk!';
+    LabelSubtitle.Font.Style := [fsBold];
+    LabelSubtitle.Font.Color := Accent;
+    LabelSubtitle.StyleElements := [];
+  end
+  else
+  begin
+    LabelSubtitle.Caption := 'L''agenda della conferenza, sala per sala';
+    LabelSubtitle.Font.Style := [];
+    LabelSubtitle.StyleElements := [seFont, seClient, seBorder];
+  end;
   FCurrent[False] := CurrentSessionIndex(FAgenda, 'Kirk', T);
   FCurrent[True] := CurrentSessionIndex(FAgenda, 'Spock', T);
   if FSimulated then
