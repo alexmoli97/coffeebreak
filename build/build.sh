@@ -3,7 +3,7 @@
 #   build.sh test               compila ed esegue i test DUnitX
 #   build.sh app <versione>     compila le risorse (VERSIONINFO = <versione>.0) e CoffeeBreak.exe
 #   build.sh all <versione>     test, app, firma dell'exe, installer Inno Setup firmato
-# La firma usa il certificato con thumbprint \$CODESIGN_THUMBPRINT (archivio CurrentUser\My);
+# La firma usa il certificato con thumbprint $CODESIGN_THUMBPRINT (archivio CurrentUser\My);
 # se non è impostato lo legge da ../demo-env/certs.json, il certificato di demo.
 set -euo pipefail
 
