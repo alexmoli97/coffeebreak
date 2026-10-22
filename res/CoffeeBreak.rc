@@ -1,0 +1,32 @@
+// Modello: build.sh sostituisce @VERSION@, @VERSION_COMMA@, @ROOT@ e @STYLES@ e compila il risultato con cgrc.
+
+MAINICON ICON "@ROOT@/res/CoffeeBreak.ico"
+1 24 "@ROOT@/res/CoffeeBreak.manifest"
+AGENDA RCDATA "@ROOT@/data/agenda-2026.json"
+APPSTYLE VCLSTYLE "@STYLES@/WindowsModern.vsf"
+
+1 VERSIONINFO
+FILEVERSION @VERSION_COMMA@
+PRODUCTVERSION @VERSION_COMMA@
+FILEOS 0x4
+FILETYPE 0x1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "041004B0"
+    BEGIN
+      VALUE "CompanyName", "Alessio Molinaro\0"
+      VALUE "FileDescription", "CoffeeBreak, l'agenda di ITDevCon 2026\0"
+      VALUE "FileVersion", "@VERSION@.0\0"
+      VALUE "InternalName", "CoffeeBreak\0"
+      VALUE "LegalCopyright", "Copyright (c) 2026 Alessio Molinaro, licenza MIT\0"
+      VALUE "OriginalFilename", "CoffeeBreak.exe\0"
+      VALUE "ProductName", "CoffeeBreak\0"
+      VALUE "ProductVersion", "@VERSION@.0\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0410, 1200
+  END
+END
