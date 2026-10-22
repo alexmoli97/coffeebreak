@@ -1,0 +1,40 @@
+# Apre la PR su microsoft/winget-pkgs per una versione già pubblicata, con i manifest di manifests/.
+# Solo a mano (workflow_dispatch): nessuna release o push deve aprire una PR per conto suo.
+name: PR su winget-pkgs
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Versione da proporre (es. 1.2.0)
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Controlla la versione
+        shell: pwsh
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ($env:VERSION -notmatch '^\d+\.\d+\.\d+$') { throw "Versione non valida: $env:VERSION" }
+          $dir = "manifests/a/AlessioMolinaro/CoffeeBreak/$env:VERSION"
+          if (-not (Test-Path $dir)) { throw "Mancano i manifest in $dir" }
+          "MANIFEST_DIR=$dir" >> $env:GITHUB_ENV
+
+      - name: Scarica wingetcreate
+        shell: pwsh
+        run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+
+      - name: Apri la PR
+        shell: pwsh
+        env:
+          # PAT con scope public_repo, creato a mano: il GITHUB_TOKEN del workflow non può fare fork di winget-pkgs
+          WINGET_CREATE_GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        run: .\wingetcreate.exe submit --no-open $env:MANIFEST_DIR
