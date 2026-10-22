@@ -1,0 +1,7 @@
+build/out/
+build/dcu/
+*.dcu
+*.res
+*.identcache
+*.local
+__history/

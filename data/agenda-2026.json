@@ -1,0 +1,437 @@
+{
+ "event": "ITDevCon 2026",
+ "sessions": [
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "09:00",
+   "end": "09:20",
+   "kind": "plenary",
+   "title": "OPENING KEYNOTE",
+   "speaker": "Fabrizio Bitti e Daniele Teti"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "09:25",
+   "end": "10:20",
+   "kind": "talk",
+   "title": "DelphiMVCFramework 3.5.0-silicon e il supporto agentico: integrare mondi diversi non è mai stato così veloce!",
+   "speaker": "Daniele Teti"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "10:20",
+   "end": "10:45",
+   "kind": "break",
+   "title": "COFFE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "10:50",
+   "end": "11:45",
+   "kind": "talk",
+   "title": "Mastering the New FMX Style Designer",
+   "speaker": "Ray Konopka"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "11:50",
+   "end": "12:45",
+   "kind": "talk",
+   "title": "Robot Wars I - Come farsi obbedire da un robot in Delphi",
+   "speaker": "Marco Breveglieri"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "12:50",
+   "end": "14:00",
+   "kind": "lunch",
+   "title": "LUNCH",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "14:05",
+   "end": "15:00",
+   "kind": "talk",
+   "title": "Un assistente AI dentro le tue applicazioni Delphi, VCL e FMX",
+   "speaker": "Carlo Barazzetta"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "15:05",
+   "end": "16:00",
+   "kind": "talk",
+   "title": "ExeWatch: 500 persone stanno usando il tuo software in questo momento. Un crash report non ti dirà come sta andando.",
+   "speaker": "Daniele Teti"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "16:00",
+   "end": "16:25",
+   "kind": "break",
+   "title": "COFFEE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "16:30",
+   "end": "17:25",
+   "kind": "talk",
+   "title": "Robot Wars II - Combat Strategies and Tuning for the arena",
+   "speaker": "Sileide Campos"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "17:30",
+   "end": "18:25",
+   "kind": "talk",
+   "title": "Robot War: Final Showdown",
+   "speaker": "Marco Breveglieri e Sileide Campos"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Kirk",
+   "start": "18:30",
+   "end": "18:40",
+   "kind": "plenary",
+   "title": "DAY ONE CLOSING SESSION",
+   "speaker": "Fabrizio Bitti e Daniele Teti"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "09:00",
+   "end": "09:20",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "09:25",
+   "end": "10:20",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "10:20",
+   "end": "10:45",
+   "kind": "break",
+   "title": "COFFE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "10:50",
+   "end": "11:45",
+   "kind": "talk",
+   "title": "Delphi & GPU Compute: Calcolo ad Alte Prestazioni con Direct3D 11 e Metal",
+   "speaker": "Omar Bossoni"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "11:50",
+   "end": "12:45",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "12:50",
+   "end": "14:00",
+   "kind": "lunch",
+   "title": "LUNCH",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "14:05",
+   "end": "15:00",
+   "kind": "talk",
+   "title": "Continuous Deployment con le GitHub Actions",
+   "speaker": "Alberto Dal Dosso"
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "15:05",
+   "end": "16:00",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "16:00",
+   "end": "16:25",
+   "kind": "break",
+   "title": "COFFEE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "16:30",
+   "end": "17:25",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "17:30",
+   "end": "18:25",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-19",
+   "room": "Spock",
+   "start": "18:30",
+   "end": "18:40",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "09:00",
+   "end": "09:05",
+   "kind": "plenary",
+   "title": "WELCOME TO THE DAY 2",
+   "speaker": "Fabrizio Bitti e Daniele Teti"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "09:10",
+   "end": "10:05",
+   "kind": "talk",
+   "title": "Mastering the FMX ListView",
+   "speaker": "Ray Konopka"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "10:05",
+   "end": "10:30",
+   "kind": "break",
+   "title": "COFFE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "10:35",
+   "end": "11:30",
+   "kind": "talk",
+   "title": "KAI + ExeWatch: il mondo Delphi non sarà più lo stesso",
+   "speaker": "Daniele Teti"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "11:35",
+   "end": "12:30",
+   "kind": "talk",
+   "title": "Abbiamo assunto un Agente AI: colloquio, periodo di prova e licenziamento",
+   "speaker": "Fabrizio Bitti"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "12:35",
+   "end": "12:55",
+   "kind": "plenary",
+   "title": "PRIZE DRAW",
+   "speaker": "I nostri sponsor"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "13:00",
+   "end": "14:15",
+   "kind": "lunch",
+   "title": "LUNCH",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "14:20",
+   "end": "15:15",
+   "kind": "talk",
+   "title": "Mastering Dark VCL Styles",
+   "speaker": "Ray Konopka"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "15:20",
+   "end": "16:15",
+   "kind": "talk",
+   "title": "The IDE has left the chat. Delphi hasn't.",
+   "speaker": "Marco Geuze"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "16:15",
+   "end": "16:40",
+   "kind": "break",
+   "title": "COFFEE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "16:45",
+   "end": "17:40",
+   "kind": "talk",
+   "title": "Basta con \"AggiornamentiU.pas\", usa WinGet e UniGetUI per distribuire le tue applicazioni Delphi!",
+   "speaker": "Alessio Molinaro"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Kirk",
+   "start": "17:45",
+   "end": "17:55",
+   "kind": "plenary",
+   "title": "CLOSING SESSION",
+   "speaker": "Fabrizio Bitti e Daniele Teti"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "09:00",
+   "end": "09:05",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "09:10",
+   "end": "10:05",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "10:05",
+   "end": "10:30",
+   "kind": "break",
+   "title": "COFFE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "10:35",
+   "end": "11:30",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "11:35",
+   "end": "12:30",
+   "kind": "talk",
+   "title": "Chaos Engineering in Delphi: sorridere a Murphy",
+   "speaker": "Marco Breveglieri"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "12:35",
+   "end": "12:55",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "13:00",
+   "end": "14:15",
+   "kind": "lunch",
+   "title": "LUNCH",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "14:20",
+   "end": "15:15",
+   "kind": "talk",
+   "title": "L'identità digitale entra in Delphi: IAMClient4D 2.5",
+   "speaker": "Claudio Piffer"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "15:20",
+   "end": "16:15",
+   "kind": "talk",
+   "title": "“13+12=15” -- Conflitti di sincronizzazione impossibili by design",
+   "speaker": "Maurizio Del Magno"
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "16:15",
+   "end": "16:40",
+   "kind": "break",
+   "title": "COFFEE BREAK",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "16:45",
+   "end": "17:40",
+   "kind": "free",
+   "title": "TBA",
+   "speaker": ""
+  },
+  {
+   "day": "2026-11-20",
+   "room": "Spock",
+   "start": "17:45",
+   "end": "17:55",
+   "kind": "free",
+   "title": "-",
+   "speaker": ""
+  }
+ ]
+}
