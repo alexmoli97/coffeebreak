@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
+
+PackageIdentifier: AlessioMolinaro.CoffeeBreak
+PackageVersion: 1.2.0
+InstallerType: inno
+Scope: user
+InstallModes:
+- interactive
+- silent
+- silentWithProgress
+InstallerSwitches:
+  Custom: /CURRENTUSER
+UpgradeBehavior: install
+ProductCode: '{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}_is1'
+ReleaseDate: 2026-10-22
+AppsAndFeaturesEntries:
+- DisplayName: CoffeeBreak
+  Publisher: Alessio Molinaro
+  ProductCode: '{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}_is1'
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/alexmoli97/coffeebreak/releases/download/v1.2.0/CoffeeBreak-1.2.0-x64-setup.exe
+  InstallerSha256: A7F403DF8A7F9BC0892FD6346503C901E491CBAD496A0E534842AC24A5518AAE
+ManifestType: installer
+ManifestVersion: 1.12.0
