@@ -65,6 +65,9 @@ implementation
 uses
   System.DateUtils, Winapi.ShellAPI, Winapi.Dwmapi, Vcl.Themes, Vcl.Imaging.pngimage, App.Options;
 
+// non dichiarata in Winapi.Windows
+function RegisterApplicationRestart(ACommandLine: PWideChar; AFlags: DWORD): HRESULT; stdcall; external kernel32;
+
 const
   RepoUrl = 'https://github.com/alexmoli97/coffeebreak';
   Accent = TColor($002E7AE0); // arancio caffè #E07A2E
@@ -96,6 +99,9 @@ begin
   FClockOffset := ResolveNow(Args, Now) - Now;
   FSimulated := ResolveNow(Args, 0) <> 0;
   FScreenshotPath := ScreenshotPath(Args);
+  // permette al Restart Manager (usato dall'installer durante un aggiornamento) di riaprire l'app dopo averla chiusa
+  if FScreenshotPath = '' then
+    RegisterApplicationRestart(PChar(string.Join(' ', Args)), 0);
 
   FAgenda := LoadEmbeddedAgenda;
   for var S in FAgenda do
