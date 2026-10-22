@@ -27,6 +27,7 @@ type
     [Test] procedure NextBreak_FineDellaPausaEsclusa;
     [Test] procedure NextBreak_DuranteLUltimoTalk;
     [Test] procedure NextBreak_PrimaDellaConferenza;
+    [Test] procedure DopoLaConferenza;
     [Test] procedure DefaultDay_GiornoDellaConferenza;
     [Test] procedure DefaultDay_FuoriDallaConferenza;
     [Test] procedure IsLastTalk_DuranteLUltimoTalk;
@@ -192,6 +193,15 @@ var
 begin
   Assert.IsTrue(NextBreak(FAgenda, DT(2026, 10, 22, 10, 0), M) = bsUpcoming);
   Assert.AreEqual(28 * 24 * 60 + 20, M); // fino al 19/11 alle 10:20, ora locale
+end;
+
+procedure TAgendaModelTests.DopoLaConferenza;
+var
+  M: Integer;
+begin
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 21, 10, 0), M) = bsNoMore);
+  Assert.AreEqual(-1, CurrentSessionIndex(FAgenda, 'Kirk', DT(2026, 11, 21, 10, 0)));
+  Assert.AreEqual(EncodeDate(2026, 11, 19), DefaultDay(FAgenda, DT(2026, 11, 21, 10, 0)));
 end;
 
 procedure TAgendaModelTests.DefaultDay_GiornoDellaConferenza;

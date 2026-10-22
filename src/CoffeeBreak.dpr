@@ -1,4 +1,4 @@
-program CoffeeBreak;
+﻿program CoffeeBreak;
 
 {$R CoffeeBreak.res}
 

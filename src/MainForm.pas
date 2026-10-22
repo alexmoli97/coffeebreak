@@ -77,7 +77,8 @@ const
 
 function DayCaption(const ADay: TDate): string;
 begin
-  Result := DayNames[DayOfTheWeek(ADay)] + ' ' + FormatDateTime('d mmmm', ADay);
+  // mese in italiano come i giorni, anche su Windows in un'altra lingua
+  Result := DayNames[DayOfTheWeek(ADay)] + ' ' + FormatDateTime('d mmmm', ADay, TFormatSettings.Create('it-IT'));
 end;
 
 function AppVersion: string;
