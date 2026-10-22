@@ -3,7 +3,7 @@
 MAINICON ICON "@ROOT@/res/CoffeeBreak.ico"
 1 24 "@ROOT@/res/CoffeeBreak.manifest"
 AGENDA RCDATA "@ROOT@/data/agenda-2026.json"
-APPSTYLE VCLSTYLE "@STYLES@/WindowsModern.vsf"
+APPSTYLE VCLSTYLE "@STYLES@/WindowsModernDark.vsf"
 
 1 VERSIONINFO
 FILEVERSION @VERSION_COMMA@

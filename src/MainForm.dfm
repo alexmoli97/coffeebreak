@@ -71,9 +71,44 @@ object FormMain: TFormMain
       OnClick = DayButtonClick
     end
   end
-  object PanelKirk: TPanel
+  object PanelBreak: TPanel
     Left = 0
     Top = 100
+    Width = 1180
+    Height = 84
+    Margins.Left = 16
+    Margins.Top = 0
+    Margins.Right = 16
+    Margins.Bottom = 12
+    Align = alTop
+    AlignWithMargins = True
+    BevelOuter = bvNone
+    Color = 3046112
+    ParentBackground = False
+    StyleElements = []
+    TabOrder = 3
+    object LabelBreak: TLabel
+      Left = 0
+      Top = 0
+      Width = 1148
+      Height = 84
+      Align = alClient
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Coffee break'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -35
+      Font.Name = 'Segoe UI Semibold'
+      Font.Style = []
+      ParentFont = False
+      Layout = tlCenter
+      StyleElements = []
+    end
+  end
+  object PanelKirk: TPanel
+    Left = 0
+    Top = 196
     Width = 590
     Height = 597
     Align = alLeft
@@ -128,7 +163,7 @@ object FormMain: TFormMain
   end
   object PanelSpock: TPanel
     Left = 590
-    Top = 100
+    Top = 196
     Width = 590
     Height = 597
     Align = alClient

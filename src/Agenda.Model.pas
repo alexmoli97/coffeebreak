@@ -20,6 +20,7 @@ function LoadEmbeddedAgenda: TArray<TSession>;
 function CurrentSessionIndex(const AAgenda: TArray<TSession>; const ARoom: string; const ANow: TDateTime): Integer;
 function NextBreak(const AAgenda: TArray<TSession>; const ANow: TDateTime; out AMinutes: Integer): TBreakState;
 function DefaultDay(const AAgenda: TArray<TSession>; const ANow: TDateTime): TDate;
+function BreakBannerText(const AState: TBreakState; const AMinutes: Integer): string;
 
 implementation
 
@@ -134,6 +135,46 @@ begin
     if (Result = 0) or (S.Day < Result) then
       Result := S.Day;
   end;
+end;
+
+function Quantity(const AValue: Integer; const ASingular, APlural: string): string;
+begin
+  if AValue = 1 then
+    Result := '1 ' + ASingular
+  else
+    Result := AValue.ToString + ' ' + APlural;
+end;
+
+// "Manca 1 minuto", "Mancano 20 minuti"
+function Remaining(const AValue: Integer; const AText: string): string;
+begin
+  if AValue = 1 then
+    Result := 'Manca ' + AText
+  else
+    Result := 'Mancano ' + AText;
+end;
+
+function BreakBannerText(const AState: TBreakState; const AMinutes: Integer): string;
+var
+  Hours, Minutes: Integer;
+begin
+  case AState of
+    bsInProgress:
+      Exit('Coffee break in corso (ancora ' + Quantity(AMinutes, 'minuto', 'minuti') + ')');
+    bsNoMore:
+      Exit('Coffee break finiti. Prossimo: ITDevCon 2027');
+  end;
+  if AMinutes >= MinsPerDay then
+    Exit(Remaining(AMinutes div MinsPerDay, Quantity(AMinutes div MinsPerDay, 'giorno', 'giorni')) + ' al primo coffee break');
+  if AMinutes < MinsPerHour then
+    Exit(Remaining(AMinutes, Quantity(AMinutes, 'minuto', 'minuti')) + ' al coffee break');
+  Hours := AMinutes div MinsPerHour;
+  Minutes := AMinutes mod MinsPerHour;
+  if Minutes = 0 then
+    Result := Remaining(Hours, Quantity(Hours, 'ora', 'ore'))
+  else
+    Result := 'Mancano ' + Quantity(Hours, 'ora', 'ore') + ' e ' + Quantity(Minutes, 'minuto', 'minuti');
+  Result := Result + ' al coffee break';
 end;
 
 end.

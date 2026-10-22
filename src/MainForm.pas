@@ -12,6 +12,8 @@ type
     PanelHeader: TPanel;
     LabelTitle: TLabel;
     LabelSubtitle: TLabel;
+    PanelBreak: TPanel;
+    LabelBreak: TLabel;
     ButtonDay19: TSpeedButton;
     ButtonDay20: TSpeedButton;
     PanelKirk: TPanel;
@@ -173,8 +175,10 @@ end;
 procedure TFormMain.RefreshClock;
 var
   T: TDateTime;
+  Minutes: Integer;
 begin
   T := CurrentNow;
+  LabelBreak.Caption := BreakBannerText(NextBreak(FAgenda, T, Minutes), Minutes);
   FCurrent[False] := CurrentSessionIndex(FAgenda, 'Kirk', T);
   FCurrent[True] := CurrentSessionIndex(FAgenda, 'Spock', T);
   if FSimulated then
@@ -202,6 +206,8 @@ begin
     AList.Canvas.Font.Style := [fsBold];
     Exit;
   end;
+  // in custom draw il canvas parte dai colori del controllo, non da quelli dello stile VCL
+  AList.Canvas.Brush.Color := StyleServices.GetSystemColor(clWindow);
   AList.Canvas.Font.Color := StyleServices.GetSystemColor(clWindowText);
   case FAgenda[Index].Kind of
     skBreak, skLunch:

@@ -14,7 +14,7 @@ type
   public
     [Setup] procedure Setup;
     [Test] procedure ParseAgenda_Restituisce48Sessioni;
-    [Test] procedure ParseAgenda_ConservaIQuattroRefusi;
+    [Test] procedure ParseAgenda_RefusoCorretto;
     [Test] procedure ParseAgenda_TipoDalCampoKindNonDalTitolo;
     [Test] procedure ParseAgenda_KindSconosciutoSollevaEccezione;
     [Test] procedure SlotVuotiETBA_SonoLiberi;
@@ -29,6 +29,16 @@ type
     [Test] procedure NextBreak_PrimaDellaConferenza;
     [Test] procedure DefaultDay_GiornoDellaConferenza;
     [Test] procedure DefaultDay_FuoriDallaConferenza;
+    [Test]
+    [TestCase('20 minuti', '0,20,Mancano 20 minuti al coffee break')]
+    [TestCase('1 minuto', '0,1,Manca 1 minuto al coffee break')]
+    [TestCase('1 ora', '0,60,Manca 1 ora al coffee break')]
+    [TestCase('ore e minuti', '0,1060,Mancano 17 ore e 40 minuti al coffee break')]
+    [TestCase('giorni', '0,40340,Mancano 28 giorni al primo coffee break')]
+    [TestCase('1 giorno', '0,1500,Manca 1 giorno al primo coffee break')]
+    [TestCase('in corso', '1,15,Coffee break in corso (ancora 15 minuti)')]
+    [TestCase('finiti', '2,0,Coffee break finiti. Prossimo: ITDevCon 2027')]
+    procedure BreakBannerText_Testo(const AState, AMinutes: Integer; const AExpected: string);
   end;
 
 implementation
@@ -68,9 +78,17 @@ begin
   Assert.AreEqual(24, Day19);
 end;
 
-procedure TAgendaModelTests.ParseAgenda_ConservaIQuattroRefusi;
+procedure TAgendaModelTests.ParseAgenda_RefusoCorretto;
 begin
-  Assert.AreEqual(4, CountTitle('COFFE BREAK'));
+  Assert.AreEqual(0, CountTitle('COFFE BREAK'));
+  // le quattro pause del mattino (19/11 10:20 e 20/11 10:05, entrambe le sale) ora sono scritte giuste
+  for var S in FAgenda do
+    if (S.StartAt = DT(2026, 11, 19, 10, 20)) or (S.StartAt = DT(2026, 11, 20, 10, 5)) then
+    begin
+      Assert.AreEqual('COFFEE BREAK', S.Title);
+      Assert.IsTrue(S.Kind = skBreak, 'kind break');
+    end;
+  Assert.AreEqual(8, CountTitle('COFFEE BREAK'));
 end;
 
 procedure TAgendaModelTests.ParseAgenda_TipoDalCampoKindNonDalTitolo;
@@ -181,6 +199,11 @@ end;
 procedure TAgendaModelTests.DefaultDay_FuoriDallaConferenza;
 begin
   Assert.AreEqual(EncodeDate(2026, 11, 19), DefaultDay(FAgenda, DT(2026, 10, 22, 10, 0)));
+end;
+
+procedure TAgendaModelTests.BreakBannerText_Testo(const AState, AMinutes: Integer; const AExpected: string);
+begin
+  Assert.AreEqual(AExpected, BreakBannerText(TBreakState(AState), AMinutes));
 end;
 
 initialization
