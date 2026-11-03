@@ -46,12 +46,14 @@ I path di Delphi, Inno Setup e Windows SDK sono in cima a `build/build.sh`: adat
 ### D1: WinGet da utente
 
 ```
-winget search UniGetUI -s winget
-winget show --id Devolutions.UniGetUI -s winget
-winget install --id Devolutions.UniGetUI -e -s winget
-winget list --id Devolutions.UniGetUI
-winget upgrade --id Devolutions.UniGetUI -s winget
+winget search PuTTY -s winget
+winget show --id PuTTY.PuTTY -e -s winget
+winget install --id PuTTY.PuTTY -e -s winget --version 0.84.0.0 --accept-package-agreements
+winget list --id PuTTY.PuTTY -e
+winget upgrade --id PuTTY.PuTTY -e -s winget --accept-package-agreements
 ```
+
+La 0.84.0.0 si installa apposta: così `winget list` mostra la versione nuova nella colonna `Available` e `winget upgrade` ha un aggiornamento vero da fare. PuTTY si installa per tutto il PC, quindi installazione e aggiornamento chiedono la conferma UAC.
 
 Con più sorgenti conviene indicare quella giusta. Con la sorgente rewinged della D3 attiva, `winget install` e `winget upgrade` di un pacchetto che rewinged non ha falliscono con `0x8a150044`: rewinged risponde 404 alla richiesta del manifest e WinGet lo legge come endpoint mancante.
 
