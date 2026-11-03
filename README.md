@@ -35,7 +35,7 @@ Slide: [`docs/itdevcon-2026-slide.pdf`](docs/itdevcon-2026-slide.pdf).
 - `build/build.sh`: test, compilazione, firma dell'exe, installer, firma dell'installer.
 - `build/publish.sh`: tag Git e GitHub Release con installer e changelog.
 - `build/manifest.sh`: i tre manifest WinGet di una versione, con lo SHA256 calcolato sul file pubblicato e `winget validate`.
-- `manifests/`: i manifest delle versioni 1.0.0, 1.1.0 e 1.2.0, nella stessa struttura di `microsoft/winget-pkgs`.
+- `manifests/`: i manifest delle versioni 1.0.0, 1.1.0, 1.2.0 e 1.2.1, nella stessa struttura di `microsoft/winget-pkgs`.
 - `.github/workflows/winget-pr.yml`: apre la PR su `microsoft/winget-pkgs` con `wingetcreate submit`. Parte solo a mano (`workflow_dispatch`).
 - `demo/itdevcon.ubundle`: il bundle di UniGetUI usato nella demo.
 
