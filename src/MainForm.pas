@@ -71,6 +71,10 @@ uses
 function RegisterApplicationRestart(ACommandLine: PWideChar; AFlags: DWORD): HRESULT; stdcall; external kernel32;
 
 const
+  // flag di RegisterApplicationRestart (WinBase.h), anche loro non dichiarati
+  RESTART_NO_CRASH = 1;
+  RESTART_NO_HANG = 2;
+  RESTART_NO_REBOOT = 8;
   RepoUrl = 'https://github.com/alexmoli97/coffeebreak';
   Accent = TColor($002E7AE0); // arancio caffè #E07A2E
   DayNames: array [1 .. 7] of string = ('Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica');
@@ -104,7 +108,9 @@ begin
   FScreenshotPath := ScreenshotPath(Args);
   // permette al Restart Manager (usato dall'installer durante un aggiornamento) di riaprire l'app dopo averla chiusa
   if FScreenshotPath = '' then
-    RegisterApplicationRestart(PChar(string.Join(' ', Args)), 0);
+    // shortcut: argomenti senza spazi (oggi solo --now), virgolette se ne arriva uno con spazi
+    // riavvio solo dopo un aggiornamento: non dopo crash, blocchi o riavvii di Windows
+    RegisterApplicationRestart(PChar(string.Join(' ', Args)), RESTART_NO_CRASH or RESTART_NO_HANG or RESTART_NO_REBOOT);
 
   FAgenda := LoadEmbeddedAgenda;
   for var S in FAgenda do
@@ -278,7 +284,13 @@ end;
 procedure TFormMain.TimerScreenshotTimer(Sender: TObject);
 begin
   TimerScreenshot.Enabled := False;
-  SaveScreenshot(FScreenshotPath);
+  try
+    SaveScreenshot(FScreenshotPath);
+  except
+    // niente dialogo che blocca chi ha lanciato --screenshot: il fallimento arriva dal codice di uscita
+    on Exception do
+      ExitCode := 1;
+  end;
   Application.Terminate;
 end;
 
@@ -297,7 +309,6 @@ begin
   if DwmGetWindowAttribute(Handle, DWMWA_EXTENDED_FRAME_BOUNDS, @Bounds, SizeOf(Bounds)) <> S_OK then
     GetWindowRect(Handle, Bounds);
   Bitmap := TBitmap.Create(Bounds.Width, Bounds.Height);
-  Png := TPngImage.Create;
   try
     ScreenDC := GetDC(0);
     try
@@ -305,10 +316,14 @@ begin
     finally
       ReleaseDC(0, ScreenDC);
     end;
-    Png.Assign(Bitmap);
-    Png.SaveToFile(AFileName);
+    Png := TPngImage.Create;
+    try
+      Png.Assign(Bitmap);
+      Png.SaveToFile(AFileName);
+    finally
+      Png.Free;
+    end;
   finally
-    Png.Free;
     Bitmap.Free;
   end;
 end;
