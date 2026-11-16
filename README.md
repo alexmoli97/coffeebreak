@@ -26,7 +26,7 @@ L'`AppId` dell'installer è `{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}` e non va ma
 
 ## Il talk
 
-Slide: [`docs/itdevcon-2026-slide.pdf`](docs/itdevcon-2026-slide.pdf).
+Slide: [`docs/itdevcon-2026-slide.pdf`](docs/itdevcon-2026-slide.pdf). Fonti: [`FONTI.md`](FONTI.md).
 
 ## Cosa c'è nel repository
 
