@@ -3,7 +3,8 @@ unit App.Options.Tests;
 interface
 
 uses
-  DUnitX.TestFramework, App.Options;
+  DUnitX.TestFramework,
+  App.Options;
 
 type
   [TestFixture]
@@ -12,6 +13,7 @@ type
     [Test] procedure ResolveNow_FormatoValido;
     [Test] procedure ResolveNow_TestoNonValido;
     [Test] procedure ResolveNow_DataImpossibile;
+    [Test] procedure ResolveNow_SoloCifre;
     [Test] procedure ResolveNow_SenzaArgomento;
     [Test] procedure ScreenshotPath_Presente;
     [Test] procedure ScreenshotPath_Assente;
@@ -20,7 +22,8 @@ type
 implementation
 
 uses
-  System.SysUtils, System.DateUtils;
+  System.SysUtils,
+  System.DateUtils;
 
 const
   SystemNow: TDateTime = 46000.5;
@@ -38,6 +41,13 @@ end;
 procedure TAppOptionsTests.ResolveNow_DataImpossibile;
 begin
   Assert.AreEqual(SystemNow, ResolveNow(['--now=2026-13-40T99:99'], SystemNow));
+end;
+
+procedure TAppOptionsTests.ResolveNow_SoloCifre;
+begin
+  // StrToInt accetta segni ed esadecimale: '+026' diventerebbe l'anno 26
+  Assert.AreEqual(SystemNow, ResolveNow(['--now=+026-11-20T16:50'], SystemNow));
+  Assert.AreEqual(SystemNow, ResolveNow(['--now=2026-$B-20T16:50'], SystemNow));
 end;
 
 procedure TAppOptionsTests.ResolveNow_SenzaArgomento;

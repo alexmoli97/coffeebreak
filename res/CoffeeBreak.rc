@@ -1,4 +1,4 @@
-// Modello: build.sh sostituisce @VERSION@, @VERSION_COMMA@, @ROOT@ e @STYLES@ e compila il risultato con cgrc.
+// Modello: build.sh sostituisce @VERSION@, @VERSION_COMMA@, @ROOT@ e @STYLES@ e compila il risultato con rc.exe del Windows SDK.
 
 MAINICON ICON "@ROOT@/res/CoffeeBreak.ico"
 1 24 "@ROOT@/res/CoffeeBreak.manifest"
