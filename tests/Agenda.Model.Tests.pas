@@ -14,7 +14,7 @@ type
     function CountTitle(const ATitle: string): Integer;
   public
     [Setup] procedure Setup;
-    [Test] procedure ParseAgenda_Restituisce48Sessioni;
+    [Test] procedure ParseAgenda_Restituisce50Sessioni;
     [Test] procedure ParseAgenda_RefusoCorretto;
     [Test] procedure ParseAgenda_TipoDalCampoKindNonDalTitolo;
     [Test] procedure ParseAgenda_KindSconosciutoSollevaEccezione;
@@ -73,16 +73,16 @@ begin
       Inc(Result);
 end;
 
-procedure TAgendaModelTests.ParseAgenda_Restituisce48Sessioni;
+procedure TAgendaModelTests.ParseAgenda_Restituisce50Sessioni;
 var
   LDay19: Integer;
 begin
-  Assert.AreEqual(48, Integer(Length(FAgenda)));
+  Assert.AreEqual(50, Integer(Length(FAgenda)));
   LDay19 := 0;
   for var LSession in FAgenda do
     if LSession.Day = EncodeDate(2026, 11, 19) then
       Inc(LDay19);
-  Assert.AreEqual(24, LDay19);
+  Assert.AreEqual(26, LDay19);
 end;
 
 procedure TAgendaModelTests.ParseAgenda_RefusoCorretto;
@@ -157,7 +157,7 @@ end;
 
 procedure TAgendaModelTests.CurrentSession_SlotLiberoNonEvidenziato;
 begin
-  Assert.AreEqual(-1, CurrentSessionIndex(FAgenda, 'Spock', DT(2026, 11, 20, 16, 50)));
+  Assert.AreEqual(-1, CurrentSessionIndex(FAgenda, 'Spock', DT(2026, 11, 20, 17, 50)));
 end;
 
 procedure TAgendaModelTests.NextBreak_MancanoVentiMinuti;
