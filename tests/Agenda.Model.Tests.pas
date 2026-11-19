@@ -3,7 +3,8 @@ unit Agenda.Model.Tests;
 interface
 
 uses
-  DUnitX.TestFramework, Agenda.Model;
+  DUnitX.TestFramework,
+  Agenda.Model;
 
 type
   [TestFixture]
@@ -27,6 +28,7 @@ type
     [Test] procedure NextBreak_FineDellaPausaEsclusa;
     [Test] procedure NextBreak_DuranteLUltimoTalk;
     [Test] procedure NextBreak_PrimaDellaConferenza;
+    [Test] procedure DopoLaConferenza;
     [Test] procedure DefaultDay_GiornoDellaConferenza;
     [Test] procedure DefaultDay_FuoriDallaConferenza;
     [Test] procedure IsLastTalk_DuranteLUltimoTalk;
@@ -47,9 +49,11 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, System.DateUtils;
+  System.SysUtils,
+  System.IOUtils,
+  System.DateUtils;
 
-function DT(AYear, AMonth, ADay, AHour, AMinute: Word): TDateTime;
+function DT(const AYear, AMonth, ADay, AHour, AMinute: Word): TDateTime;
 begin
   Result := EncodeDateTime(AYear, AMonth, ADay, AHour, AMinute, 0, 0);
 end;
@@ -64,48 +68,48 @@ end;
 function TAgendaModelTests.CountTitle(const ATitle: string): Integer;
 begin
   Result := 0;
-  for var S in FAgenda do
-    if S.Title = ATitle then
+  for var LSession in FAgenda do
+    if LSession.Title = ATitle then
       Inc(Result);
 end;
 
 procedure TAgendaModelTests.ParseAgenda_Restituisce48Sessioni;
 var
-  Day19: Integer;
+  LDay19: Integer;
 begin
   Assert.AreEqual(48, Integer(Length(FAgenda)));
-  Day19 := 0;
-  for var S in FAgenda do
-    if S.Day = EncodeDate(2026, 11, 19) then
-      Inc(Day19);
-  Assert.AreEqual(24, Day19);
+  LDay19 := 0;
+  for var LSession in FAgenda do
+    if LSession.Day = EncodeDate(2026, 11, 19) then
+      Inc(LDay19);
+  Assert.AreEqual(24, LDay19);
 end;
 
 procedure TAgendaModelTests.ParseAgenda_RefusoCorretto;
 begin
   Assert.AreEqual(0, CountTitle('COFFE BREAK'));
   // le quattro pause del mattino (19/11 10:20 e 20/11 10:05, entrambe le sale) ora sono scritte giuste
-  for var S in FAgenda do
-    if (S.StartAt = DT(2026, 11, 19, 10, 20)) or (S.StartAt = DT(2026, 11, 20, 10, 5)) then
+  for var LSession in FAgenda do
+    if (LSession.StartAt = DT(2026, 11, 19, 10, 20)) or (LSession.StartAt = DT(2026, 11, 20, 10, 5)) then
     begin
-      Assert.AreEqual('COFFEE BREAK', S.Title);
-      Assert.IsTrue(S.Kind = skBreak, 'kind break');
+      Assert.AreEqual('COFFEE BREAK', LSession.Title);
+      Assert.IsTrue(LSession.Kind = skBreak, 'kind break');
     end;
   Assert.AreEqual(8, CountTitle('COFFEE BREAK'));
 end;
 
 procedure TAgendaModelTests.ParseAgenda_TipoDalCampoKindNonDalTitolo;
 var
-  A: TArray<TSession>;
+  LAgenda: TArray<TSession>;
 begin
-  A := ParseAgenda('{"event":"x","sessions":[' +
+  LAgenda := ParseAgenda('{"event":"x","sessions":[' +
     '{"day":"2026-11-19","room":"Kirk","start":"10:20","end":"10:45","kind":"break","title":"Pausa","speaker":""},' +
     '{"day":"2026-11-19","room":"Kirk","start":"10:50","end":"11:45","kind":"talk","title":"COFFEE BREAK","speaker":"X"}]}');
-  Assert.AreEqual(2, Integer(Length(A)));
-  Assert.IsTrue(A[0].Kind = skBreak, 'kind break');
-  Assert.IsTrue(A[1].Kind = skTalk, 'kind talk');
-  Assert.AreEqual(DT(2026, 11, 19, 10, 50), A[1].StartAt);
-  Assert.AreEqual(DT(2026, 11, 19, 11, 45), A[1].EndAt);
+  Assert.AreEqual(2, Integer(Length(LAgenda)));
+  Assert.IsTrue(LAgenda[0].Kind = skBreak, 'kind break');
+  Assert.IsTrue(LAgenda[1].Kind = skTalk, 'kind talk');
+  Assert.AreEqual(DT(2026, 11, 19, 10, 50), LAgenda[1].StartAt);
+  Assert.AreEqual(DT(2026, 11, 19, 11, 45), LAgenda[1].EndAt);
 end;
 
 procedure TAgendaModelTests.ParseAgenda_KindSconosciutoSollevaEccezione;
@@ -120,25 +124,25 @@ end;
 
 procedure TAgendaModelTests.SlotVuotiETBA_SonoLiberi;
 var
-  Free: Integer;
+  LFree: Integer;
 begin
-  Free := 0;
-  for var S in FAgenda do
-    if (S.Title = '-') or (S.Title = 'TBA') then
+  LFree := 0;
+  for var LSession in FAgenda do
+    if (LSession.Title = '-') or (LSession.Title = 'TBA') then
     begin
-      Assert.IsTrue(S.Kind = skFree, S.Title + ' alle ' + TimeToStr(S.StartAt));
-      Inc(Free);
+      Assert.IsTrue(LSession.Kind = skFree, LSession.Title + ' alle ' + TimeToStr(LSession.StartAt));
+      Inc(LFree);
     end;
-  Assert.AreEqual(13, Free);
+  Assert.AreEqual(13, LFree);
 end;
 
 procedure TAgendaModelTests.CurrentSession_DuranteIlTalkDiAlessio;
 var
-  I: Integer;
+  LIndex: Integer;
 begin
-  I := CurrentSessionIndex(FAgenda, 'Kirk', DT(2026, 11, 20, 16, 50));
-  Assert.IsTrue(I >= 0, 'nessuna sessione');
-  Assert.AreEqual('Alessio Molinaro', FAgenda[I].Speaker);
+  LIndex := CurrentSessionIndex(FAgenda, 'Kirk', DT(2026, 11, 20, 16, 50));
+  Assert.IsTrue(LIndex >= 0, 'nessuna sessione');
+  Assert.AreEqual('Alessio Molinaro', FAgenda[LIndex].Speaker);
 end;
 
 procedure TAgendaModelTests.CurrentSession_TraDueSlot;
@@ -158,40 +162,49 @@ end;
 
 procedure TAgendaModelTests.NextBreak_MancanoVentiMinuti;
 var
-  M: Integer;
+  LMinutes: Integer;
 begin
-  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 19, 10, 0), M) = bsUpcoming);
-  Assert.AreEqual(20, M);
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 19, 10, 0), LMinutes) = bsUpcoming);
+  Assert.AreEqual(20, LMinutes);
 end;
 
 procedure TAgendaModelTests.NextBreak_InCorsoAncoraQuindiciMinuti;
 var
-  M: Integer;
+  LMinutes: Integer;
 begin
-  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 19, 10, 30), M) = bsInProgress);
-  Assert.AreEqual(15, M);
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 19, 10, 30), LMinutes) = bsInProgress);
+  Assert.AreEqual(15, LMinutes);
 end;
 
 procedure TAgendaModelTests.NextBreak_FineDellaPausaEsclusa;
 var
-  M: Integer;
+  LMinutes: Integer;
 begin
-  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 20, 16, 40), M) = bsNoMore);
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 20, 16, 40), LMinutes) = bsNoMore);
 end;
 
 procedure TAgendaModelTests.NextBreak_DuranteLUltimoTalk;
 var
-  M: Integer;
+  LMinutes: Integer;
 begin
-  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 20, 16, 50), M) = bsNoMore);
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 20, 16, 50), LMinutes) = bsNoMore);
 end;
 
 procedure TAgendaModelTests.NextBreak_PrimaDellaConferenza;
 var
-  M: Integer;
+  LMinutes: Integer;
 begin
-  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 10, 22, 10, 0), M) = bsUpcoming);
-  Assert.AreEqual(28 * 24 * 60 + 20, M); // fino al 19/11 alle 10:20, ora locale
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 10, 22, 10, 0), LMinutes) = bsUpcoming);
+  Assert.AreEqual(28 * 24 * 60 + 20, LMinutes); // fino al 19/11 alle 10:20, ora locale
+end;
+
+procedure TAgendaModelTests.DopoLaConferenza;
+var
+  LMinutes: Integer;
+begin
+  Assert.IsTrue(NextBreak(FAgenda, DT(2026, 11, 21, 10, 0), LMinutes) = bsNoMore);
+  Assert.AreEqual(-1, CurrentSessionIndex(FAgenda, 'Kirk', DT(2026, 11, 21, 10, 0)));
+  Assert.AreEqual(EncodeDate(2026, 11, 19), DefaultDay(FAgenda, DT(2026, 11, 21, 10, 0)));
 end;
 
 procedure TAgendaModelTests.DefaultDay_GiornoDellaConferenza;
