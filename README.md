@@ -1,121 +1,57 @@
-# CoffeeBreak
+# ITDevCon 2026 · WinGet e UniGetUI per le applicazioni Delphi
 
-L'agenda di ITDevCon 2026 (Roma, 19-20 novembre), con il conto alla rovescia per il coffee break.
+Il materiale del talk **"Basta con "AggiornamentiU.pas"! Usa WinGet e UniGetUI per distribuire le tue applicazioni Delphi"** di Alessio Molinaro, a [ITDevCon 2026](https://itdevcon.it/home/itdevcon-2026): Roma, 20 novembre 2026, Sala Kirk.
 
-App demo del talk "Basta con AggiornamentiU.pas! Usa WinGet e UniGetUI per distribuire le tue applicazioni Delphi" (20 novembre, Sala Kirk, 16:45). L'app non contiene codice di aggiornamento: installazione e aggiornamenti passano da WinGet.
+- **Slide**: [`docs/itdevcon-2026-slide.pdf`](docs/itdevcon-2026-slide.pdf), online dal 20 novembre
+- **Fonti** citate nel talk: [`FONTI.md`](FONTI.md)
+- **Rifare le demo** sul tuo PC: [`demo/README.md`](demo/README.md)
+- **Installer** firmati di CoffeeBreak: [Releases](https://github.com/alexmoli97/coffeebreak/releases)
 
-## Build
+## CoffeeBreak, l'app delle demo
 
-Da WSL, con Delphi 13 installato su Windows:
+L'agenda di ITDevCon 2026, sala per sala, con il conto alla rovescia per il coffee break. È un'applicazione VCL scritta con Delphi 13 e non contiene una riga di codice di aggiornamento: installazione e aggiornamenti passano da WinGet.
 
-```
-build/build.sh test
-```
+Ogni versione cambia qualcosa che si vede da metà sala, così durante le demo si capisce subito che l'aggiornamento è arrivato:
 
-Installer firmato (Inno Setup 6 e Windows SDK):
-
-```
-build/build.sh all 1.0.0
-```
-
-L'`AppId` dell'installer è `{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}` e non va mai cambiato: Windows registra l'app come `{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}_is1`, ed è il `ProductCode` con cui WinGet la riconosce.
-
-## Opzioni da riga di comando
-
-- `--now=2026-11-20T16:50`: usa quest'ora invece di quella di sistema (prove e video).
-
-## Il talk
-
-Slide: [`docs/itdevcon-2026-slide.pdf`](docs/itdevcon-2026-slide.pdf). Fonti: [`FONTI.md`](FONTI.md).
+| Versione | Cosa cambia |
+|---|---|
+| 1.0.0 | Stile chiaro, con i refusi dell'agenda del sito ("COFFE BREAK") |
+| 1.1.0 | Stile scuro, refusi corretti, conto alla rovescia per il coffee break |
+| 1.2.0 | Durante l'ultimo talk l'intestazione ringrazia chi è rimasto |
+| 1.2.1 | Correzioni: vedi [`CHANGELOG.md`](CHANGELOG.md) |
 
 ## Cosa c'è nel repository
 
-- `src/`, `tests/`: l'app VCL e i test DUnitX del modello dell'agenda.
-- `installer/CoffeeBreak.iss`: installer Inno Setup pronto per WinGet. `AppId` fisso, installazione per utente senza UAC, modalità silenziosa, chiusura e riapertura dell'app durante l'aggiornamento.
-- `build/build.sh`: test, compilazione, firma dell'exe, installer, firma dell'installer.
-- `build/publish.sh`: tag Git e GitHub Release con installer e changelog.
-- `build/manifest.sh`: i tre manifest WinGet di una versione, con lo SHA256 calcolato sul file pubblicato e `winget validate`.
-- `manifests/`: i manifest delle versioni 1.0.0, 1.1.0, 1.2.0 e 1.2.1, nella stessa struttura di `microsoft/winget-pkgs`.
-- `.github/workflows/winget-pr.yml`: apre la PR su `microsoft/winget-pkgs` con `wingetcreate submit`. Parte solo a mano (`workflow_dispatch`).
-- `demo/itdevcon.ubundle`: il bundle di UniGetUI usato nella demo.
+| Cartella | Contenuto |
+|---|---|
+| `src/`, `tests/` | L'app VCL e i test DUnitX del modello dell'agenda |
+| `installer/` | Lo script Inno Setup, pronto per WinGet |
+| `manifests/` | I manifest WinGet delle quattro versioni, nella struttura di `microsoft/winget-pkgs` |
+| `build/` | Build, firma, release su GitHub e manifest, da WSL |
+| `demo/` | Le istruzioni per rifare le demo e il bundle di UniGetUI |
+| `.github/workflows/` | La PR su `microsoft/winget-pkgs` con `wingetcreate submit`; parte solo a mano |
 
-I path di Delphi, Inno Setup e Windows SDK sono in cima a `build/build.sh`: adattali al tuo PC. La firma usa il certificato dell'archivio `CurrentUser\My` indicato da `CODESIGN_THUMBPRINT`. Un certificato self-signed vale solo sul PC dove lo rendi attendibile: per distribuire davvero serve un certificato emesso da una CA o la firma cloud.
+## Le regole dell'installer
 
-## Rifare le demo
+Le cinque regole del talk, applicate in `installer/CoffeeBreak.iss` e in `build/manifest.sh`:
 
-### D1: WinGet da utente
+1. **AppId fisso**: `{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}`. Windows registra l'app come `{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}_is1`, ed è il `ProductCode` con cui WinGet la riconosce.
+2. **DisplayVersion uguale a PackageVersion**, altrimenti WinGet ripropone l'aggiornamento all'infinito.
+3. **Un URL per versione, mai sovrascritto**: il manifest contiene lo SHA256 dell'installer.
+4. **Installazione silenziosa**, senza messaggi che la blocchino.
+5. **Per utente, senza UAC**, con la possibilità per l'IT di installare per tutta la macchina.
 
-```
-winget search PuTTY -s winget
-winget show --id PuTTY.PuTTY -e -s winget
-winget install --id PuTTY.PuTTY -e -s winget --version 0.84.0.0 --accept-package-agreements
-winget list --id PuTTY.PuTTY -e
-winget upgrade --id PuTTY.PuTTY -e -s winget --accept-package-agreements
-```
+## Compilare
 
-La 0.84.0.0 si installa apposta: così `winget list` mostra la versione nuova nella colonna `Available` e `winget upgrade` ha un aggiornamento vero da fare. PuTTY si installa per tutto il PC, quindi installazione e aggiornamento chiedono la conferma UAC.
-
-Con più sorgenti conviene indicare quella giusta. Con la sorgente rewinged della D3 attiva, `winget install` e `winget upgrade` di un pacchetto che rewinged non ha falliscono con `0x8a150044`: rewinged risponde 404 alla richiesta del manifest e WinGet lo legge come endpoint mancante.
-
-### D2: il primo manifest
+Da WSL, con Delphi 13, Inno Setup 6 e il Windows SDK installati su Windows. I loro path sono in cima a `build/build.sh`: adattali al tuo PC.
 
 ```
-winget settings --enable LocalManifestFiles          # da amministratore
-wingetcreate new https://github.com/alexmoli97/coffeebreak/releases/download/v1.0.0/CoffeeBreak-1.0.0-x64-setup.exe
-winget validate --manifest <cartella del manifest>
-winget install --manifest <cartella del manifest>
+build/build.sh test          # test DUnitX
+build/build.sh all 1.2.1     # test, app, firma, installer firmato
 ```
 
-Alla domanda finale di `wingetcreate new`, se inviare il manifest a `winget-pkgs`, rispondi No. L'installer arriva da Internet ed è firmato con un certificato che Windows non conosce: SmartScreen può fermarlo con "PC protetto da Windows".
+La firma usa il certificato dell'archivio `CurrentUser\My` indicato da `CODESIGN_THUMBPRINT`. Un certificato self-signed vale solo sul PC dove lo rendi attendibile: per distribuire davvero serve un certificato emesso da una CA o la firma cloud.
 
-### D3: una sorgente privata
+## Licenza
 
-Una sorgente REST con [rewinged](https://github.com/jantari/rewinged) su `https://localhost:8443`. WinGet vuole HTTPS anche in locale.
-
-1. Un certificato per `localhost`, reso attendibile per l'utente corrente:
-
-   ```
-   openssl req -x509 -newkey rsa:2048 -nodes -days 60 -subj "/CN=localhost" \
-     -keyout localhost.key -out localhost.crt \
-     -addext "basicConstraints=critical,CA:FALSE" \
-     -addext "extendedKeyUsage=serverAuth" \
-     -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-   ```
-
-   ```
-   Import-Certificate -FilePath localhost.crt -CertStoreLocation Cert:\CurrentUser\Root
-   ```
-
-2. rewinged, con una cartella `packages` per i manifest e una `installers` dove scarica e serve gli installer:
-
-   ```
-   winget install --id jantari.rewinged -e
-   rewinged -https -listen localhost:8443 -manifestPath .\packages -autoInternalize -autoInternalizePath .\installers -httpsCertificateFile localhost.crt -httpsPrivateKeyFile localhost.key
-   ```
-
-3. La sorgente, da amministratore:
-
-   ```
-   winget source add -n itdevcon -a https://localhost:8443/api -t Microsoft.Rest --trust-level trusted
-   ```
-
-   Con `--trust-level trusted` WinGet marca gli installer scaricati come zona Attendibili invece che Internet, e SmartScreen non li ferma. Usalo solo con sorgenti che controlli tu.
-
-4. Copia in `packages` i tre file di `manifests/a/AlessioMolinaro/CoffeeBreak/1.0.0`: rewinged li serve subito. `winget install --id AlessioMolinaro.CoffeeBreak -s itdevcon`, poi copia la 1.1.0 e `winget upgrade --id AlessioMolinaro.CoffeeBreak`.
-
-### D4: UniGetUI
-
-Avvia UniGetUI dopo aver aggiunto la sorgente: legge le sorgenti di WinGet all'avvio. Nella pagina Aggiornamenti CoffeeBreak compare con la sorgente "WinGet: itdevcon".
-
-- Tasto destro, "Salta questa versione": ignora la 1.2.0 ma non le successive.
-- Tasto destro, "Opzioni di aggiornamento", "Aggiorna automaticamente questo pacchetto". Funziona solo con la manutenzione pianificata "Installa gli aggiornamenti disponibili" attiva e limitata ai pacchetti contrassegnati. Attivarla senza quel limite aggiorna tutti i pacchetti del PC.
-- Pagina Raccolte pacchetti: apri `demo/itdevcon.ubundle` e installa i due pacchetti (CoffeeBreak e WinMerge) in un colpo.
-
-Le stesse operazioni da script, con la CLI `uniget` che parla con UniGetUI aperto:
-
-```
-uniget package updates --manager winget
-uniget package ignored add --id AlessioMolinaro.CoffeeBreak --manager winget --version 1.2.0
-uniget bundle import --path demo\itdevcon.ubundle
-uniget bundle install
-```
+MIT, vedi [`LICENSE`](LICENSE).
