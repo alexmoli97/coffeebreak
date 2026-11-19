@@ -62,7 +62,7 @@ Una sorgente REST con [rewinged](https://github.com/jantari/rewinged) su `https:
 
    Con `--trust-level trusted` WinGet marca gli installer scaricati come zona Attendibili invece che Internet, e SmartScreen non li ferma. Usalo solo con sorgenti che controlli tu.
 
-4. Copia in `packages` i tre file di [`manifests/a/AlessioMolinaro/CoffeeBreak/1.0.0`](../manifests/a/AlessioMolinaro/CoffeeBreak/1.0.0): rewinged li serve subito. `winget install --id AlessioMolinaro.CoffeeBreak -s itdevcon`, poi copia la 1.1.0 e `winget upgrade --id AlessioMolinaro.CoffeeBreak`.
+4. Copia in `packages` i tre file di [`manifests/a/AlessioMolinaro/CoffeeBreak/1.0.0`](../manifests/a/AlessioMolinaro/CoffeeBreak/1.0.0): rewinged li serve subito. `winget install --id AlessioMolinaro.CoffeeBreak -s itdevcon`, poi copia la 1.1.0 e `winget upgrade --id AlessioMolinaro.CoffeeBreak -s itdevcon`. Indicare la sorgente evita che un timeout dello Store (`msstore`) faccia fallire il comando.
 
 ## D4: UniGetUI
 
