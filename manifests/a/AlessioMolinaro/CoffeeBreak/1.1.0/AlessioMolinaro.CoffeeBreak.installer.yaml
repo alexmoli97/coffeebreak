@@ -12,7 +12,7 @@ InstallerSwitches:
   Custom: /CURRENTUSER
 UpgradeBehavior: install
 ProductCode: '{5B8DF55B-80F0-4CF5-ABCC-A745529C4B65}_is1'
-ReleaseDate: 2026-10-22
+ReleaseDate: 2026-11-19
 AppsAndFeaturesEntries:
 - DisplayName: CoffeeBreak
   Publisher: Alessio Molinaro
@@ -20,6 +20,6 @@ AppsAndFeaturesEntries:
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/alexmoli97/coffeebreak/releases/download/v1.1.0/CoffeeBreak-1.1.0-x64-setup.exe
-  InstallerSha256: 6E9DF78EF685EEFEEE6714DB80BF557065BFC8A3B4ED58630BE98376242046DA
+  InstallerSha256: 5AE59178BE5B990D8DA8223D197F39770AC690E429C9CA7A17ABF1CD0E5B7EEB
 ManifestType: installer
 ManifestVersion: 1.12.0
