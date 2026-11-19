@@ -26,115 +26,125 @@ function IsLastTalk(const AAgenda: TArray<TSession>; const ANow: TDateTime): Boo
 implementation
 
 uses
-  System.SysUtils, System.Classes, System.Generics.Collections, System.JSON, System.DateUtils, System.Types;
+  System.SysUtils,
+  System.Classes,
+  System.Generics.Collections, // senza, TJSONArray.GetValue non viene espanso inline (H2443)
+  System.JSON,
+  System.DateUtils,
+  System.Types;
 
 const
   KindNames: array [TSessionKind] of string = ('talk', 'break', 'lunch', 'plenary', 'free');
 
 function ParseKind(const AName: string): TSessionKind;
 begin
-  for var K := Low(TSessionKind) to High(TSessionKind) do
-    if KindNames[K] = AName then
-      Exit(K);
+  for var LKind := Low(TSessionKind) to High(TSessionKind) do
+    if KindNames[LKind] = AName then
+      Exit(LKind);
   raise EConvertError.CreateFmt('Tipo di sessione sconosciuto: "%s"', [AName]);
 end;
 
-// "2026-11-19" + "10:20"
+// "2026-11-19" + "10:20". Al massimo quattro cifre per campo, quindi la conversione in Word non perde nulla;
+// una data o un'ora impossibile fa sollevare EConvertError a EncodeDateTime
 function ParseDateTime(const ADay, ATime: string): TDateTime;
 begin
-  Result := EncodeDateTime(ADay.Substring(0, 4).ToInteger, ADay.Substring(5, 2).ToInteger, ADay.Substring(8, 2).ToInteger,
-    ATime.Substring(0, 2).ToInteger, ATime.Substring(3, 2).ToInteger, 0, 0);
+  Result := EncodeDateTime(Word(ADay.Substring(0, 4).ToInteger), Word(ADay.Substring(5, 2).ToInteger),
+    Word(ADay.Substring(8, 2).ToInteger), Word(ATime.Substring(0, 2).ToInteger),
+    Word(ATime.Substring(3, 2).ToInteger), 0, 0);
 end;
 
 function ParseAgenda(const AJson: string): TArray<TSession>;
 var
-  Root: TJSONValue;
-  Items: TJSONArray;
+  LRoot: TJSONValue;
+  LItems: TJSONArray;
 begin
-  Root := TJSONObject.ParseJSONValue(AJson, False, True);
+  // con RaiseExc = True un JSON non valido solleva un'eccezione invece di restituire nil
+  LRoot := TJSONObject.ParseJSONValue(AJson, False, True);
   try
-    Items := Root.GetValue<TJSONArray>('sessions');
-    SetLength(Result, Items.Count);
-    for var I := 0 to Items.Count - 1 do
+    LItems := LRoot.GetValue<TJSONArray>('sessions');
+    SetLength(Result, LItems.Count);
+    for var I: Integer := 0 to LItems.Count - 1 do
     begin
-      var Item := Items[I];
-      var Day := Item.GetValue<string>('day');
-      Result[I].StartAt := ParseDateTime(Day, Item.GetValue<string>('start'));
-      Result[I].EndAt := ParseDateTime(Day, Item.GetValue<string>('end'));
+      var LItem := LItems[I];
+      var LDay := LItem.GetValue<string>('day');
+      Result[I].StartAt := ParseDateTime(LDay, LItem.GetValue<string>('start'));
+      Result[I].EndAt := ParseDateTime(LDay, LItem.GetValue<string>('end'));
       Result[I].Day := DateOf(Result[I].StartAt);
-      Result[I].Room := Item.GetValue<string>('room');
-      Result[I].Kind := ParseKind(Item.GetValue<string>('kind'));
-      Result[I].Title := Item.GetValue<string>('title');
-      Result[I].Speaker := Item.GetValue<string>('speaker');
+      Result[I].Room := LItem.GetValue<string>('room');
+      Result[I].Kind := ParseKind(LItem.GetValue<string>('kind'));
+      Result[I].Title := LItem.GetValue<string>('title');
+      Result[I].Speaker := LItem.GetValue<string>('speaker');
     end;
   finally
-    Root.Free;
+    LRoot.Free;
   end;
 end;
 
 function LoadEmbeddedAgenda: TArray<TSession>;
 var
-  Stream: TResourceStream;
-  Bytes: TBytes;
+  LStream: TResourceStream;
+  LBytes: TBytes;
 begin
-  Stream := TResourceStream.Create(HInstance, 'AGENDA', RT_RCDATA);
+  LStream := TResourceStream.Create(HInstance, 'AGENDA', RT_RCDATA);
   try
-    SetLength(Bytes, Stream.Size);
-    Stream.ReadBuffer(Bytes, Stream.Size);
+    SetLength(LBytes, LStream.Size);
+    LStream.ReadBuffer(LBytes, LStream.Size);
   finally
-    Stream.Free;
+    LStream.Free;
   end;
-  Result := ParseAgenda(TEncoding.UTF8.GetString(Bytes));
+  Result := ParseAgenda(TEncoding.UTF8.GetString(LBytes));
 end;
 
 function CurrentSessionIndex(const AAgenda: TArray<TSession>; const ARoom: string; const ANow: TDateTime): Integer;
 begin
-  for var I := 0 to High(AAgenda) do
+  // l'agenda ha 48 sessioni: Length (NativeInt su Win64) sta comodo in un Integer
+  for var I: Integer := 0 to Integer(Length(AAgenda)) - 1 do
     if (AAgenda[I].Room = ARoom) and (AAgenda[I].Kind <> skFree)
       and (AAgenda[I].StartAt <= ANow) and (ANow < AAgenda[I].EndAt) then
       Exit(I);
   Result := -1;
 end;
 
-// minuti arrotondati per eccesso: "mancano 0 minuti" solo quando è davvero l'ora
+// minuti arrotondati per eccesso: "mancano 0 minuti" solo quando è davvero l'ora.
+// MilliSecondsBetween restituisce il valore assoluto: chi chiama garantisce AFrom < ATo
 function MinutesUntil(const AFrom, ATo: TDateTime): Integer;
 begin
-  Result := (MilliSecondsBetween(ATo, AFrom) + 59999) div 60000;
+  Result := Integer((MilliSecondsBetween(ATo, AFrom) + 59999) div 60000);
 end;
 
 function NextBreak(const AAgenda: TArray<TSession>; const ANow: TDateTime; out AMinutes: Integer): TBreakState;
 var
-  Next: TDateTime;
+  LNext: TDateTime;
 begin
   AMinutes := 0;
-  Next := 0;
-  for var S in AAgenda do
+  LNext := 0;
+  for var LSession in AAgenda do
   begin
-    if S.Kind <> skBreak then
+    if LSession.Kind <> skBreak then
       Continue;
-    if (S.StartAt <= ANow) and (ANow < S.EndAt) then
+    if (LSession.StartAt <= ANow) and (ANow < LSession.EndAt) then
     begin
-      AMinutes := MinutesUntil(ANow, S.EndAt);
+      AMinutes := MinutesUntil(ANow, LSession.EndAt);
       Exit(bsInProgress);
     end;
-    if (S.StartAt > ANow) and ((Next = 0) or (S.StartAt < Next)) then
-      Next := S.StartAt;
+    if (LSession.StartAt > ANow) and ((LNext = 0) or (LSession.StartAt < LNext)) then
+      LNext := LSession.StartAt;
   end;
-  if Next = 0 then
+  if LNext = 0 then
     Exit(bsNoMore);
-  AMinutes := MinutesUntil(ANow, Next);
+  AMinutes := MinutesUntil(ANow, LNext);
   Result := bsUpcoming;
 end;
 
 function DefaultDay(const AAgenda: TArray<TSession>; const ANow: TDateTime): TDate;
 begin
   Result := 0;
-  for var S in AAgenda do
+  for var LSession in AAgenda do
   begin
-    if S.Day = DateOf(ANow) then
-      Exit(S.Day);
-    if (Result = 0) or (S.Day < Result) then
-      Result := S.Day;
+    if LSession.Day = DateOf(ANow) then
+      Exit(LSession.Day);
+    if (Result = 0) or (LSession.Day < Result) then
+      Result := LSession.Day;
   end;
 end;
 
@@ -157,7 +167,7 @@ end;
 
 function BreakBannerText(const AState: TBreakState; const AMinutes: Integer): string;
 var
-  Hours, Minutes: Integer;
+  LHours, LMinutes: Integer;
 begin
   case AState of
     bsInProgress:
@@ -165,30 +175,32 @@ begin
     bsNoMore:
       Exit('Coffee break finiti. Prossimo: ITDevCon 2027');
   end;
+  // bsUpcoming
   if AMinutes >= MinsPerDay then
     Exit(Remaining(AMinutes div MinsPerDay, Quantity(AMinutes div MinsPerDay, 'giorno', 'giorni')) + ' al primo coffee break');
   if AMinutes < MinsPerHour then
     Exit(Remaining(AMinutes, Quantity(AMinutes, 'minuto', 'minuti')) + ' al coffee break');
-  Hours := AMinutes div MinsPerHour;
-  Minutes := AMinutes mod MinsPerHour;
-  if Minutes = 0 then
-    Result := Remaining(Hours, Quantity(Hours, 'ora', 'ore'))
+  LHours := AMinutes div MinsPerHour;
+  LMinutes := AMinutes mod MinsPerHour;
+  if LMinutes = 0 then
+    Result := Remaining(LHours, Quantity(LHours, 'ora', 'ore'))
   else
-    Result := 'Mancano ' + Quantity(Hours, 'ora', 'ore') + ' e ' + Quantity(Minutes, 'minuto', 'minuti');
+    Result := 'Mancano ' + Quantity(LHours, 'ora', 'ore') + ' e ' + Quantity(LMinutes, 'minuto', 'minuti');
   Result := Result + ' al coffee break';
 end;
 
 // vero mentre è in corso un talk dell'ultimo slot della conferenza
 function IsLastTalk(const AAgenda: TArray<TSession>; const ANow: TDateTime): Boolean;
 var
-  LastStart: TDateTime;
+  LLastStart: TDateTime;
 begin
-  LastStart := 0;
-  for var S in AAgenda do
-    if (S.Kind = skTalk) and (S.StartAt > LastStart) then
-      LastStart := S.StartAt;
-  for var S in AAgenda do
-    if (S.Kind = skTalk) and (S.StartAt = LastStart) and (S.StartAt <= ANow) and (ANow < S.EndAt) then
+  LLastStart := 0;
+  for var LSession in AAgenda do
+    if (LSession.Kind = skTalk) and (LSession.StartAt > LLastStart) then
+      LLastStart := LSession.StartAt;
+  for var LSession in AAgenda do
+    if (LSession.Kind = skTalk) and (LSession.StartAt = LLastStart) and (LSession.StartAt <= ANow)
+      and (ANow < LSession.EndAt) then
       Exit(True);
   Result := False;
 end;

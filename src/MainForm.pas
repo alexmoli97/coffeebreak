@@ -3,8 +3,21 @@
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, System.Types, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Menus, Vcl.Dialogs, System.ImageList, Vcl.ImgList,
+  Winapi.Windows,
+  System.SysUtils,
+  System.Classes,
+  System.Types,
+  System.ImageList,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.ComCtrls,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.Buttons,
+  Vcl.Menus,
+  Vcl.Dialogs,
+  Vcl.ImgList,
   Agenda.Model;
 
 type
@@ -49,10 +62,10 @@ type
     FScreenshotPath: string;
     FCurrent: array [Boolean] of Integer; // indice in FAgenda della sessione in corso: False = Kirk, True = Spock
     function CurrentNow: TDateTime;
-    procedure FillList(AList: TListView; const ARoom: string);
+    procedure FillList(const AList: TListView; const ARoom: string);
     procedure FillDay;
     procedure RefreshClock;
-    procedure StyleItem(AList: TCustomListView; AItem: TListItem);
+    procedure StyleItem(const AList: TCustomListView; const AItem: TListItem);
     procedure AboutHyperlinkClicked(Sender: TObject);
     procedure SaveScreenshot(const AFileName: string);
   end;
@@ -65,7 +78,12 @@ implementation
 {$R *.dfm}
 
 uses
-  System.DateUtils, Winapi.ShellAPI, Winapi.Dwmapi, Vcl.Themes, Vcl.Imaging.pngimage, App.Options;
+  System.DateUtils,
+  Winapi.ShellAPI,
+  Winapi.Dwmapi,
+  Vcl.Themes,
+  Vcl.Imaging.pngimage,
+  App.Options;
 
 // non dichiarata in Winapi.Windows
 function RegisterApplicationRestart(ACommandLine: PWideChar; AFlags: DWORD): HRESULT; stdcall; external kernel32;
@@ -87,35 +105,40 @@ end;
 
 function AppVersion: string;
 var
-  Major, Minor, Build: Cardinal;
+  LMajor, LMinor, LBuild: Cardinal;
 begin
-  if GetProductVersion(ParamStr(0), Major, Minor, Build) then
-    Result := Format('%d.%d.%d', [Major, Minor, Build])
+  if GetProductVersion(ParamStr(0), LMajor, LMinor, LBuild) then
+    Result := Format('%d.%d.%d', [LMajor, LMinor, LBuild])
   else
     Result := '?';
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
 var
-  Args: TArray<string>;
+  LArgs: TArray<string>;
+  LNow: TDateTime;
 begin
-  SetLength(Args, ParamCount);
-  for var I := 1 to ParamCount do
-    Args[I - 1] := ParamStr(I);
+  SetLength(LArgs, ParamCount);
+  for var I: Integer := 1 to ParamCount do
+    LArgs[I - 1] := ParamStr(I);
   // con --now l'orologio parte dall'ora indicata e poi avanza normalmente
-  FClockOffset := ResolveNow(Args, Now) - Now;
-  FSimulated := ResolveNow(Args, 0) <> 0;
-  FScreenshotPath := ScreenshotPath(Args);
-  // permette al Restart Manager (usato dall'installer durante un aggiornamento) di riaprire l'app dopo averla chiusa
+  LNow := Now;
+  FClockOffset := ResolveNow(LArgs, LNow) - LNow;
+  FSimulated := ResolveNow(LArgs, 0) <> 0;
+  FScreenshotPath := ScreenshotPath(LArgs);
+  // permette al Restart Manager (usato dall'installer durante un aggiornamento) di riaprire l'app dopo averla chiusa;
+  // l'esito non si controlla: senza registrazione l'app resta chiusa dopo l'aggiornamento, come qualsiasi altra
   if FScreenshotPath = '' then
     // shortcut: argomenti senza spazi (oggi solo --now), virgolette se ne arriva uno con spazi
     // riavvio solo dopo un aggiornamento: non dopo crash, blocchi o riavvii di Windows
-    RegisterApplicationRestart(PChar(string.Join(' ', Args)), RESTART_NO_CRASH or RESTART_NO_HANG or RESTART_NO_REBOOT);
+    RegisterApplicationRestart(PChar(string.Join(' ', LArgs)), RESTART_NO_CRASH or RESTART_NO_HANG or RESTART_NO_REBOOT);
 
   FAgenda := LoadEmbeddedAgenda;
-  for var S in FAgenda do
-    if (Length(FDays) = 0) or (FDays[High(FDays)] <> S.Day) then
-      FDays := FDays + [S.Day];
+  for var LSession in FAgenda do
+    if (Length(FDays) = 0) or (FDays[High(FDays)] <> LSession.Day) then
+      FDays := FDays + [LSession.Day];
+  // un pulsante per giorno, nel .dfm
+  Assert(Length(FDays) = 2, 'L''agenda incorporata deve avere due giorni');
   FVersion := AppVersion;
 
   Caption := 'CoffeeBreak ' + FVersion;
@@ -144,7 +167,8 @@ end;
 
 procedure TFormMain.DayButtonClick(Sender: TObject);
 begin
-  FDay := FDays[TComponent(Sender).Tag];
+  // Tag 0 e 1 nel .dfm
+  FDay := FDays[(Sender as TComponent).Tag];
   FillDay;
 end;
 
@@ -154,24 +178,25 @@ begin
   FillList(ListSpock, 'Spock');
 end;
 
-procedure TFormMain.FillList(AList: TListView; const ARoom: string);
+procedure TFormMain.FillList(const AList: TListView; const ARoom: string);
 begin
   AList.Items.BeginUpdate;
   try
     AList.Items.Clear;
-    for var I := 0 to High(FAgenda) do
+    for var I: Integer := 0 to Integer(Length(FAgenda)) - 1 do
     begin
-      var S := FAgenda[I];
-      if (S.Day <> FDay) or (S.Room <> ARoom) then
+      var LSession := FAgenda[I];
+      if (LSession.Day <> FDay) or (LSession.Room <> ARoom) then
         Continue;
-      var Item := AList.Items.Add;
-      Item.Caption := FormatDateTime('hh:nn', S.StartAt) + ' - ' + FormatDateTime('hh:nn', S.EndAt);
-      if S.Title = '-' then
-        Item.SubItems.Add('')
+      var LItem := AList.Items.Add;
+      LItem.Caption := FormatDateTime('hh:nn', LSession.StartAt) + ' - ' + FormatDateTime('hh:nn', LSession.EndAt);
+      if LSession.Title = '-' then
+        LItem.SubItems.Add('')
       else
-        Item.SubItems.Add(S.Title);
-      Item.SubItems.Add(S.Speaker);
-      Item.Data := Pointer(NativeInt(I));
+        LItem.SubItems.Add(LSession.Title);
+      LItem.SubItems.Add(LSession.Speaker);
+      // l'indice in FAgenda, non un puntatore: StyleItem lo rilegge da Data
+      LItem.Data := Pointer(NativeInt(I));
     end;
   finally
     AList.Items.EndUpdate;
@@ -180,12 +205,12 @@ end;
 
 procedure TFormMain.RefreshClock;
 var
-  T: TDateTime;
-  Minutes: Integer;
+  LNow: TDateTime;
+  LMinutes: Integer;
 begin
-  T := CurrentNow;
-  LabelBreak.Caption := BreakBannerText(NextBreak(FAgenda, T, Minutes), Minutes);
-  if IsLastTalk(FAgenda, T) then
+  LNow := CurrentNow;
+  LabelBreak.Caption := BreakBannerText(NextBreak(FAgenda, LNow, LMinutes), LMinutes);
+  if IsLastTalk(FAgenda, LNow) then
   begin
     LabelSubtitle.Caption := 'Grazie per essere rimasti fino all''ultimo talk!';
     LabelSubtitle.Font.Style := [fsBold];
@@ -198,10 +223,10 @@ begin
     LabelSubtitle.Font.Style := [];
     LabelSubtitle.StyleElements := [seFont, seClient, seBorder];
   end;
-  FCurrent[False] := CurrentSessionIndex(FAgenda, 'Kirk', T);
-  FCurrent[True] := CurrentSessionIndex(FAgenda, 'Spock', T);
+  FCurrent[False] := CurrentSessionIndex(FAgenda, 'Kirk', LNow);
+  FCurrent[True] := CurrentSessionIndex(FAgenda, 'Spock', LNow);
   if FSimulated then
-    StatusBar.Panels[1].Text := 'Ora simulata: ' + FormatDateTime('dd/mm/yyyy hh:nn', T)
+    StatusBar.Panels[1].Text := 'Ora simulata: ' + FormatDateTime('dd/mm/yyyy hh:nn', LNow)
   else
     StatusBar.Panels[1].Text := '';
   ListKirk.Invalidate;
@@ -213,12 +238,12 @@ begin
   RefreshClock;
 end;
 
-procedure TFormMain.StyleItem(AList: TCustomListView; AItem: TListItem);
+procedure TFormMain.StyleItem(const AList: TCustomListView; const AItem: TListItem);
 var
-  Index: Integer;
+  LIndex: NativeInt;
 begin
-  Index := NativeInt(AItem.Data);
-  if Index = FCurrent[AList = ListSpock] then
+  LIndex := NativeInt(AItem.Data);
+  if LIndex = FCurrent[AList = ListSpock] then
   begin
     AList.Canvas.Brush.Color := Accent;
     AList.Canvas.Font.Color := clWhite;
@@ -228,7 +253,7 @@ begin
   // in custom draw il canvas parte dai colori del controllo, non da quelli dello stile VCL
   AList.Canvas.Brush.Color := StyleServices.GetSystemColor(clWindow);
   AList.Canvas.Font.Color := StyleServices.GetSystemColor(clWindowText);
-  case FAgenda[Index].Kind of
+  case FAgenda[LIndex].Kind of
     skBreak, skLunch:
       AList.Canvas.Font.Style := [fsItalic];
     skPlenary:
@@ -257,28 +282,29 @@ end;
 
 procedure TFormMain.MenuAboutClick(Sender: TObject);
 var
-  Dialog: TTaskDialog;
+  LDialog: TTaskDialog;
 begin
-  Dialog := TTaskDialog.Create(Self);
+  // senza owner: lo libera il finally, non il form
+  LDialog := TTaskDialog.Create(nil);
   try
-    Dialog.Caption := 'Informazioni su CoffeeBreak';
-    Dialog.Title := 'CoffeeBreak ' + FVersion;
-    Dialog.Text := 'L''agenda di ITDevCon 2026, sala per sala.' + sLineBreak + sLineBreak +
+    LDialog.Caption := 'Informazioni su CoffeeBreak';
+    LDialog.Title := 'CoffeeBreak ' + FVersion;
+    LDialog.Text := 'L''agenda di ITDevCon 2026, sala per sala.' + sLineBreak + sLineBreak +
       'Questa app non contiene codice di aggiornamento: installazione e aggiornamenti passano da WinGet.';
-    Dialog.Flags := [tfEnableHyperlinks, tfAllowDialogCancellation];
-    Dialog.CommonButtons := [tcbOk];
-    Dialog.FooterIcon := tdiInformation;
-    Dialog.FooterText := '<a href="' + RepoUrl + '">' + RepoUrl + '</a>';
-    Dialog.OnHyperlinkClicked := AboutHyperlinkClicked;
-    Dialog.Execute;
+    LDialog.Flags := [tfEnableHyperlinks, tfAllowDialogCancellation];
+    LDialog.CommonButtons := [tcbOk];
+    LDialog.FooterIcon := tdiInformation;
+    LDialog.FooterText := '<a href="' + RepoUrl + '">' + RepoUrl + '</a>';
+    LDialog.OnHyperlinkClicked := AboutHyperlinkClicked;
+    LDialog.Execute;
   finally
-    Dialog.Free;
+    LDialog.Free;
   end;
 end;
 
 procedure TFormMain.AboutHyperlinkClicked(Sender: TObject);
 begin
-  ShellExecute(0, 'open', PChar(TTaskDialog(Sender).URL), nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', PChar((Sender as TTaskDialog).URL), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TFormMain.TimerScreenshotTimer(Sender: TObject);
@@ -297,34 +323,34 @@ end;
 // copia dallo schermo: PrintWindow non disegna i TGraphicControl (TLabel, TSpeedButton) dentro i pannelli
 procedure TFormMain.SaveScreenshot(const AFileName: string);
 var
-  Bounds: TRect;
-  Bitmap: TBitmap;
-  ScreenDC: HDC;
-  Png: TPngImage;
+  LBounds: TRect;
+  LBitmap: TBitmap;
+  LScreenDC: HDC;
+  LPng: TPngImage;
 begin
   SetForegroundWindow(Handle);
   Repaint;
   DwmFlush;
   // i bordi estesi escludono la cornice invisibile di DWM
-  if DwmGetWindowAttribute(Handle, DWMWA_EXTENDED_FRAME_BOUNDS, @Bounds, SizeOf(Bounds)) <> S_OK then
-    GetWindowRect(Handle, Bounds);
-  Bitmap := TBitmap.Create(Bounds.Width, Bounds.Height);
+  if DwmGetWindowAttribute(Handle, DWMWA_EXTENDED_FRAME_BOUNDS, @LBounds, SizeOf(LBounds)) <> S_OK then
+    GetWindowRect(Handle, LBounds);
+  LBitmap := TBitmap.Create(LBounds.Width, LBounds.Height);
   try
-    ScreenDC := GetDC(0);
+    LScreenDC := GetDC(0);
     try
-      BitBlt(Bitmap.Canvas.Handle, 0, 0, Bounds.Width, Bounds.Height, ScreenDC, Bounds.Left, Bounds.Top, SRCCOPY);
+      BitBlt(LBitmap.Canvas.Handle, 0, 0, LBounds.Width, LBounds.Height, LScreenDC, LBounds.Left, LBounds.Top, SRCCOPY);
     finally
-      ReleaseDC(0, ScreenDC);
+      ReleaseDC(0, LScreenDC);
     end;
-    Png := TPngImage.Create;
+    LPng := TPngImage.Create;
     try
-      Png.Assign(Bitmap);
-      Png.SaveToFile(AFileName);
+      LPng.Assign(LBitmap);
+      LPng.SaveToFile(AFileName);
     finally
-      Png.Free;
+      LPng.Free;
     end;
   finally
-    Bitmap.Free;
+    LBitmap.Free;
   end;
 end;
 
