@@ -9,13 +9,6 @@
       "ManagerName": "winget"
     },
     {
-      "Id": "Microsoft.Sysinternals.ZoomIt",
-      "Name": "ZoomIt",
-      "Version": "12.3",
-      "Source": "winget",
-      "ManagerName": "winget"
-    },
-    {
       "Id": "WinMerge.WinMerge",
       "Name": "WinMerge",
       "Version": "2.16.58.2",
