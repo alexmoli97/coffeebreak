@@ -25,7 +25,9 @@ Le fonti citate nel talk "Basta con AggiornamentiU.pas! Usa WinGet e UniGetUI pe
 - [Certificati di firma del codice validi al massimo 460 giorni](https://www.digicert.com/blog/understanding-the-new-code-signing-certificate-validity-change), DigiCert.
 - [Azure Artifact Signing](https://azure.microsoft.com/pricing/details/artifact-signing/): la firma cloud di Microsoft.
 - [Azure Artifact Signing generalmente disponibile: prezzi e chi può usarlo](https://www.devclass.com/security/2026/01/14/code-signing-windows-apps-may-be-easier-and-more-secure-with-new-azure-artifact-service/4079554), DevClass, gennaio 2026.
-- [Prezzi dei certificati OV di DigiCert e Sectigo nel 2026](https://sslinsights.com/digicert-vs-sectigo-code-signing/), SSL Insights (prezzi dei rivenditori, indicativi).
+- [Prezzi in euro dei certificati di firma del codice](https://www.ssldragon.com/it/ssl-certificates/code-signing/), SSL Dragon, letti il 19/11/2026: Sectigo OV 198,84 €, DigiCert OV 363,18 € l'anno (prezzi di un rivenditore, token e IVA non specificati).
+- [Listino ufficiale di Azure in euro](https://prices.azure.com/api/retail/prices?currencyCode=%27EUR%27&$filter=serviceName%20eq%20%27Trusted%20Signing%27), Azure Retail Prices API, letto il 19/11/2026: Artifact Signing Basic 8,9681 € al mese, oltre la quota 0,0045 € a firma (il contatore si chiama ancora Trusted Signing).
+- [Quote di Artifact Signing](https://azure.microsoft.com/pricing/details/artifact-signing/), Microsoft: Basic 5.000 firme al mese, Premium 100.000.
 - [Chiave su hardware per i certificati di firma dal 1° giugno 2023](https://cpl.thalesgroup.com/blog/encryption/ca-b-forum-code-signing-requirements-private-keys), Thales.
 
 ## Manifest e pubblicazione
