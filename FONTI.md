@@ -24,6 +24,9 @@ Le fonti citate nel talk "Basta con AggiornamentiU.pas! Usa WinGet e UniGetUI pe
 - [RFC 3161](https://www.rfc-editor.org/rfc/rfc3161): il protocollo di timestamp.
 - [Certificati di firma del codice validi al massimo 460 giorni](https://www.digicert.com/blog/understanding-the-new-code-signing-certificate-validity-change), DigiCert.
 - [Azure Artifact Signing](https://azure.microsoft.com/pricing/details/artifact-signing/): la firma cloud di Microsoft.
+- [Azure Artifact Signing generalmente disponibile: prezzi e chi può usarlo](https://www.devclass.com/security/2026/01/14/code-signing-windows-apps-may-be-easier-and-more-secure-with-new-azure-artifact-service/4079554), DevClass, gennaio 2026.
+- [Prezzi dei certificati OV di DigiCert e Sectigo nel 2026](https://sslinsights.com/digicert-vs-sectigo-code-signing/), SSL Insights (prezzi dei rivenditori, indicativi).
+- [Chiave su hardware per i certificati di firma dal 1° giugno 2023](https://cpl.thalesgroup.com/blog/encryption/ca-b-forum-code-signing-requirements-private-keys), Thales.
 
 ## Manifest e pubblicazione
 
