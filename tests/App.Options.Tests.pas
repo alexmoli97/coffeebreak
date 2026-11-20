@@ -15,8 +15,6 @@ type
     [Test] procedure ResolveNow_DataImpossibile;
     [Test] procedure ResolveNow_SoloCifre;
     [Test] procedure ResolveNow_SenzaArgomento;
-    [Test] procedure ScreenshotPath_Presente;
-    [Test] procedure ScreenshotPath_Assente;
   end;
 
 implementation
@@ -52,17 +50,7 @@ end;
 
 procedure TAppOptionsTests.ResolveNow_SenzaArgomento;
 begin
-  Assert.AreEqual(SystemNow, ResolveNow(['--screenshot=C:\a.png'], SystemNow));
-end;
-
-procedure TAppOptionsTests.ScreenshotPath_Presente;
-begin
-  Assert.AreEqual('C:\a.png', ScreenshotPath(['--now=2026-11-20T16:50', '--screenshot=C:\a.png']));
-end;
-
-procedure TAppOptionsTests.ScreenshotPath_Assente;
-begin
-  Assert.AreEqual('', ScreenshotPath(['--now=2026-11-20T16:50']));
+  Assert.AreEqual(SystemNow, ResolveNow(['--altro=valore'], SystemNow));
 end;
 
 initialization

@@ -41,7 +41,6 @@ type
     MenuAbout: TMenuItem;
     ImageListRowHeight: TImageList;
     TimerRefresh: TTimer;
-    TimerScreenshot: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure DayButtonClick(Sender: TObject);
@@ -51,7 +50,6 @@ type
       State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure MenuAboutClick(Sender: TObject);
     procedure TimerRefreshTimer(Sender: TObject);
-    procedure TimerScreenshotTimer(Sender: TObject);
   private
     FAgenda: TArray<TSession>;
     FDays: TArray<TDate>;
@@ -59,7 +57,6 @@ type
     FClockOffset: TDateTime;
     FSimulated: Boolean;
     FVersion: string;
-    FScreenshotPath: string;
     FCurrent: array [Boolean] of Integer; // indice in FAgenda della sessione in corso: False = Kirk, True = Spock
     function CurrentNow: TDateTime;
     procedure FillList(const AList: TListView; const ARoom: string);
@@ -67,7 +64,6 @@ type
     procedure RefreshClock;
     procedure StyleItem(const AList: TCustomListView; const AItem: TListItem);
     procedure AboutHyperlinkClicked(Sender: TObject);
-    procedure SaveScreenshot(const AFileName: string);
   end;
 
 var
@@ -80,9 +76,7 @@ implementation
 uses
   System.DateUtils,
   Winapi.ShellAPI,
-  Winapi.Dwmapi,
   Vcl.Themes,
-  Vcl.Imaging.pngimage,
   App.Options;
 
 // non dichiarata in Winapi.Windows
@@ -125,13 +119,11 @@ begin
   LNow := Now;
   FClockOffset := ResolveNow(LArgs, LNow) - LNow;
   FSimulated := ResolveNow(LArgs, 0) <> 0;
-  FScreenshotPath := ScreenshotPath(LArgs);
   // permette al Restart Manager (usato dall'installer durante un aggiornamento) di riaprire l'app dopo averla chiusa;
   // l'esito non si controlla: senza registrazione l'app resta chiusa dopo l'aggiornamento, come qualsiasi altra
-  if FScreenshotPath = '' then
-    // shortcut: argomenti senza spazi (oggi solo --now), virgolette se ne arriva uno con spazi
-    // riavvio solo dopo un aggiornamento: non dopo crash, blocchi o riavvii di Windows
-    RegisterApplicationRestart(PChar(string.Join(' ', LArgs)), RESTART_NO_CRASH or RESTART_NO_HANG or RESTART_NO_REBOOT);
+  // shortcut: argomenti senza spazi (oggi solo --now), virgolette se ne arriva uno con spazi
+  // riavvio solo dopo un aggiornamento: non dopo crash, blocchi o riavvii di Windows
+  RegisterApplicationRestart(PChar(string.Join(' ', LArgs)), RESTART_NO_CRASH or RESTART_NO_HANG or RESTART_NO_REBOOT);
 
   FAgenda := LoadEmbeddedAgenda;
   for var LSession in FAgenda do
@@ -152,7 +144,6 @@ begin
   ButtonDay19.Down := not ButtonDay20.Down;
   FillDay;
   RefreshClock;
-  TimerScreenshot.Enabled := FScreenshotPath <> '';
 end;
 
 function TFormMain.CurrentNow: TDateTime;
@@ -305,53 +296,6 @@ end;
 procedure TFormMain.AboutHyperlinkClicked(Sender: TObject);
 begin
   ShellExecute(0, 'open', PChar((Sender as TTaskDialog).URL), nil, nil, SW_SHOWNORMAL);
-end;
-
-procedure TFormMain.TimerScreenshotTimer(Sender: TObject);
-begin
-  TimerScreenshot.Enabled := False;
-  try
-    SaveScreenshot(FScreenshotPath);
-  except
-    // niente dialogo che blocca chi ha lanciato --screenshot: il fallimento arriva dal codice di uscita
-    on Exception do
-      ExitCode := 1;
-  end;
-  Application.Terminate;
-end;
-
-// copia dallo schermo: PrintWindow non disegna i TGraphicControl (TLabel, TSpeedButton) dentro i pannelli
-procedure TFormMain.SaveScreenshot(const AFileName: string);
-var
-  LBounds: TRect;
-  LBitmap: TBitmap;
-  LScreenDC: HDC;
-  LPng: TPngImage;
-begin
-  SetForegroundWindow(Handle);
-  Repaint;
-  DwmFlush;
-  // i bordi estesi escludono la cornice invisibile di DWM
-  if DwmGetWindowAttribute(Handle, DWMWA_EXTENDED_FRAME_BOUNDS, @LBounds, SizeOf(LBounds)) <> S_OK then
-    GetWindowRect(Handle, LBounds);
-  LBitmap := TBitmap.Create(LBounds.Width, LBounds.Height);
-  try
-    LScreenDC := GetDC(0);
-    try
-      BitBlt(LBitmap.Canvas.Handle, 0, 0, LBounds.Width, LBounds.Height, LScreenDC, LBounds.Left, LBounds.Top, SRCCOPY);
-    finally
-      ReleaseDC(0, LScreenDC);
-    end;
-    LPng := TPngImage.Create;
-    try
-      LPng.Assign(LBitmap);
-      LPng.SaveToFile(AFileName);
-    finally
-      LPng.Free;
-    end;
-  finally
-    LBitmap.Free;
-  end;
 end;
 
 end.

@@ -252,11 +252,4 @@ object FormMain: TFormMain
     Left = 560
     Top = 24
   end
-  object TimerScreenshot: TTimer
-    Enabled = False
-    Interval = 800
-    OnTimer = TimerScreenshotTimer
-    Left = 640
-    Top = 24
-  end
 end

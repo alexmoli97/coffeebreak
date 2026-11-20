@@ -3,7 +3,6 @@ unit App.Options;
 interface
 
 function ResolveNow(const AArgs: TArray<string>; const ASystemNow: TDateTime): TDateTime;
-function ScreenshotPath(const AArgs: TArray<string>): string;
 
 implementation
 
@@ -35,11 +34,6 @@ begin
     Word(LValue.Substring(8, 2).ToInteger), Word(LValue.Substring(11, 2).ToInteger),
     Word(LValue.Substring(14, 2).ToInteger), 0, 0, Result) then
     Result := ASystemNow;
-end;
-
-function ScreenshotPath(const AArgs: TArray<string>): string;
-begin
-  Result := ArgValue(AArgs, '--screenshot');
 end;
 
 end.
