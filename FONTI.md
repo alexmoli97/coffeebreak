@@ -48,3 +48,8 @@ Le fonti citate nel talk "Basta con AggiornamentiU.pas! Usa WinGet e UniGetUI pe
 - [Devolutions/UniGetUI](https://github.com/Devolutions/UniGetUI): codice, licenza MIT, stelle.
 - [UniGetUI enters its next chapter with Devolutions](https://devolutions.net/blog/2026/03/unigetui-enters-its-next-chapter-with-devolutions/), blog Devolutions, marzo 2026.
 - [CLI di UniGetUI](https://github.com/Devolutions/UniGetUI/blob/main/docs/CLI.md): i comandi `uniget`.
+
+## WinGet e l'AI
+
+- [WinGet MCP Server overview](https://learn.microsoft.com/en-us/windows/package-manager/winget/mcp-server-overview), Microsoft Learn: il server MCP di WinGet per gli agenti AI.
+- [Set up WinGet MCP Server](https://learn.microsoft.com/en-us/windows/package-manager/winget/mcp-server-setup), Microsoft Learn: `winget mcp` e la configurazione per VS Code e Copilot CLI.

@@ -70,13 +70,10 @@ Avvia UniGetUI dopo aver aggiunto la sorgente: legge le sorgenti di WinGet all'a
 
 - Tasto destro, "Salta questa versione": ignora la 1.2.0 ma non le successive.
 - Tasto destro, "Opzioni di aggiornamento", "Aggiorna automaticamente questo pacchetto". Funziona solo con la manutenzione pianificata "Installa gli aggiornamenti disponibili" attiva e limitata ai pacchetti contrassegnati. Attivarla senza quel limite aggiorna tutti i pacchetti del PC.
-- Pagina Raccolte pacchetti: apri `itdevcon.ubundle` (in questa cartella) e installa i due pacchetti (CoffeeBreak e WinMerge) in un colpo.
 
 Le stesse operazioni da script, con la CLI `uniget` che parla con UniGetUI aperto:
 
 ```
 uniget package updates --manager winget
 uniget package ignored add --id AlessioMolinaro.CoffeeBreak --manager winget --version 1.2.0
-uniget bundle import --path itdevcon.ubundle
-uniget bundle install
 ```
